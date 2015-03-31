@@ -1,6 +1,12 @@
 import sys
 import csv
-with open(sys.argv[1], 'r') as csvfile:
-    reader = csv.reader(csvfile, delimiter=',')
-    for row in reader:
-        print ', '.join(row)
+import json
+
+
+def convert_to_json():
+    with open(sys.argv[1], 'r') as csvfile:
+        reader = csv.reader(csvfile, delimiter=',')
+        return [row for row in reader]
+
+
+print json.dumps(convert_to_json(), indent=2)
