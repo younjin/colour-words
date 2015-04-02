@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Colour Names</title>
+    <script type="text/javascript">
+		var _gaq = _gaq || [];
+		var pluginUrl =
+		'//www.google-analytics.com/plugins/ga/inpage_linkid.js';
+		_gaq.push(['_require', 'inpage_linkid', pluginUrl]);
+		_gaq.push(['_setAccount', 'UA-28481260-1']);
+		_gaq.push(['_setDomainName', 'kimyounjin.com']);
+		_gaq.push(['_trackPageview']);
+
+		(function() {
+			var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+			ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+			var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+		})();
+	</script>
+    <!-- end of Google Analytics stuff -->
+
+    <style>
+		.node {
+		  stroke: #222;
+		  stroke-width: 1.5px;
+		}
+
+		.link {
+		  stroke: #999;
+		  stroke-opacity: .6;
+		}
+	</style>
+</head>
+<body>
+	<script src="http://d3js.org/d3.v3.min.js"></script>
+	<script src="https://cdn.rawgit.com/lodash/lodash/3.6.0/lodash.min.js"></script>
+	<script>
+	var width = 960,
+	    height = 500;
+
+	var force = d3.layout.force()
+	    .charge(-120)
+	    .linkDistance(30)
+	    .size([width, height]);
+
+	var svg = d3.select("body").append("svg")
+	    .attr("width", width)
+	    .attr("height", height);
+
+	var graph = function(colormap) {
+		var nodes = _.map(colormap, function(foreignName, englishName) {
+			return {name: foreignName, color: englishName};
+		});
+
+		var links = [];
+		_.each(nodes, function(nodeA, ai) {
+			_.each(nodes, function(nodeB, bi) {
+				if (nodeA.name === nodeB.name && ai != bi) {
+					links.push({"source": ai, "target": bi, "value": 1})
+				}
+			});
+		});
+
+	  force
+	      .nodes(nodes)
+	      .links(links)
+	      .start();
+
+	  var link = svg.selectAll(".link")
+	      .data(links)
+	    .enter().append("line")
+	      .attr("class", "link")
+	      .style("stroke-width", function(d) { return Math.sqrt(d.value); });
+
+	  var node = svg.selectAll(".node")
+	      .data(nodes)
+	    .enter().append("circle")
+	      .attr("class", "node")
+	      .attr("r", 5)
+	      .style("fill", function(d) { return d.color; })
+	      .call(force.drag);
+
+	  node.append("title")
+	      .text(function(d) { return d.name; });
+
+	  force.on("tick", function() {
+	    link.attr("x1", function(d) { return d.source.x; })
+	        .attr("y1", function(d) { return d.source.y; })
+	        .attr("x2", function(d) { return d.target.x; })
+	        .attr("y2", function(d) { return d.target.y; });
+
+	    node.attr("cx", function(d) { return d.x; })
+	        .attr("cy", function(d) { return d.y; });
+	  });
+	};
+
+	d3.json("words.json", function(error, languages) {
+		graph(languages["Gupapuyngu"]);
+	});
+
+	</script>
+</body>
+</html>
