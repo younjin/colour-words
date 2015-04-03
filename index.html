@@ -29,25 +29,50 @@
 		  stroke: #999;
 		  stroke-opacity: .6;
 		}
+
+		#languages {
+			width: 20%;
+			overflow: scroll;
+			top: 0;
+			left: 0;
+			positon: fixed;
+			background: #eee;
+		}
+
+		#languages a {
+			font-size: 10px;
+			font-family: sans-serif;
+			display: block;
+			color: #666;
+			text-decoration: none;
+			background: #ddd;
+			margin: 2px;
+			padding: 4px;
+		}
+
+		svg {
+			position: fixed;
+			top: 0;
+			right: 0;
+			widht: 80%;
+		}
 	</style>
 </head>
 <body>
+	<div id='languages'></div>
 	<script src="http://d3js.org/d3.v3.min.js"></script>
 	<script src="https://cdn.rawgit.com/lodash/lodash/3.6.0/lodash.min.js"></script>
 	<script>
-	var width = 960,
+	var width = window.innerWidth * 0.8,
 	    height = 500;
-
-	var force = d3.layout.force()
-	    .charge(-120)
-	    .linkDistance(30)
-	    .size([width, height]);
 
 	var svg = d3.select("body").append("svg")
 	    .attr("width", width)
 	    .attr("height", height);
 
 	var graph = function(colormap) {
+		svg.selectAll('.link').remove();
+		svg.selectAll('.node').remove();
 		var nodes = _.map(colormap, function(foreignName, englishName) {
 			return {name: foreignName, color: englishName};
 		});
@@ -61,10 +86,13 @@
 			});
 		});
 
-	  force
-	      .nodes(nodes)
-	      .links(links)
-	      .start();
+	var force = d3.layout.force()
+	    .charge(-120)
+	    .linkDistance(30)
+	    .size([width, height])
+      .nodes(nodes)
+      .links(links)
+      .start();
 
 	  var link = svg.selectAll(".link")
 	      .data(links)
@@ -92,10 +120,19 @@
 	    node.attr("cx", function(d) { return d.x; })
 	        .attr("cy", function(d) { return d.y; });
 	  });
+	  return false;
 	};
 
 	d3.json("words.json", function(error, languages) {
-		graph(languages["Gupapuyngu"]);
+		window.languages = languages;
+		document.getElementById('languages').innerHTML = _(languages)
+			.map(function(v, language) { return [v, language] })
+			.sortBy(function(v) { return Object.keys(v[0]).length; })
+			.map(function(v) {
+				var language = v[1];
+				var v = v[0];
+				return "<a href='#' onclick='return graph(languages[\"" + language + "\"]);'>(" + Object.keys(v).length + ") " + language + "</a>";
+			}).values().join("");
 	});
 
 	</script>
