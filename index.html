@@ -64,7 +64,7 @@
 	<script src="https://cdn.rawgit.com/lodash/lodash/3.6.0/lodash.min.js"></script>
 	<script>
 	var width = window.innerWidth * 0.8,
-	    height = 500;
+	    height = window.innerHeight;
 
 	var svg = d3.select("body").append("svg")
 	    .attr("width", width)
@@ -127,11 +127,12 @@
 		window.languages = languages;
 		document.getElementById('languages').innerHTML = _(languages)
 			.map(function(v, language) { return [v, language] })
-			.sortBy(function(v) { return Object.keys(v[0]).length; })
+			.sortBy(function(v) { return _.uniq(_.values(v[0])).length; })
 			.map(function(v) {
 				var language = v[1];
 				var v = v[0];
-				return "<a href='#' onclick='return graph(languages[\"" + language + "\"]);'>(" + Object.keys(v).length + ") " + language + "</a>";
+				var uniqueWords = _.uniq(_.values(v));
+				return "<a href='#' onclick='return graph(languages[\"" + language + "\"]);'>(" + uniqueWords.length + ") " + language + "</a>";
 			}).values().join("");
 	});
 
