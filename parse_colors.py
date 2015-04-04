@@ -8,7 +8,7 @@ def all_languages_and_their_words():
         rowcopy = dict(row)
         try:
             del rowcopy['Language']
-            del rowcopy['#']
+            del rowcopy['# unique BCTs']
             for k, v in dict(rowcopy).iteritems():
                 if v == "":
                     del rowcopy[k]
