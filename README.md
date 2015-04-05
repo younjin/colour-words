@@ -7,6 +7,6 @@ Nodes denote the basic colours, and edges between nodes signify that the connect
 Instructions:
 * Create a local copy of this repo.
 * Download a CSV version of the [BCT spreadsheet](https://goo.gl/LZe7wi) into the same directory.
-* Rename the CSV file to be words.csv.
+* Rename the CSV file to `words.csv`.
 * Run `make`, then `python -mSimpleHTTPServer` in this directory.
-* Open [localhost:8000/#](localhost:8000/#) in your favourite browser.
+* Open `localhost:8000/#` in your favourite browser.
